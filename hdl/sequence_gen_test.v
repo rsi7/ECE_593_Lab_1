@@ -88,6 +88,7 @@ module sequence_gen_test (
 		for  (int seq_type = 0; seq_type < 2; seq_type++) begin
 
 			case (seq_type) 
+				
 			0 : begin
 					$display ("@ %0d ns: Running Triangle sequences", $time);
 					int_fibonacci = 0;

@@ -11,7 +11,7 @@
 
 `include "definitions.sv"
 `include "sequence_gen_test.v"
-`include "top_hdl.sv"
+`include "sequence_gen.sv"
 
 module top_hdl();
 
@@ -27,7 +27,9 @@ module top_hdl();
 	/* Module instantiations												*/
 	/************************************************************************/
 
-	// sequence_gen
+	//////////////////
+	// sequence_gen //
+	//////////////////
 
 	sequence_gen i_sequence_gen (
 
@@ -47,7 +49,9 @@ module top_hdl();
 
 	);
 
-	// sequence_gen_test
+	///////////////////////
+	// sequence_gen_test //
+	///////////////////////
 
 	sequence_gen_test i_sequence_gen_test (
 

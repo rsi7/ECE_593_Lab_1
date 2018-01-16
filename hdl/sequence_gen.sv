@@ -42,6 +42,9 @@ module sequence_gen (
 	/* Local parameters and variables										 */
 	/*************************************************************************/
 
+	state_t		state	= UNKNOWN;
+	state_t		next	= UNKNOWN;
+
 	/************************************************************************/
 	/* Module instantiations												*/
 	/************************************************************************/
@@ -50,27 +53,92 @@ module sequence_gen (
 	/* FSM Block 1: reset & state advancement								 */
 	/*************************************************************************/
 
-	always@(posedge clk or negedge reset_n) begin
+	always_ff@(posedge clk) begin
 
-		// reset the FSM to idle state
+		// synchronous reset the FSM to idle state
 		if (!reset_n) begin
-			state <= IDLE;
+			state <= RESET;
 		end
 
 		// otherwise, advance the state
 		else begin
-			state <=next;
+			state <= next;
 		end
 
 	end
 
 	/*************************************************************************/
-	/* FSM Block 2: state transistions										 */
+	/* FSM Block 2: state transistions & outputs							 */
 	/*************************************************************************/
 
-	/*************************************************************************/
-	/* FSM Block 3: assigning outputs										 */
-	/*************************************************************************/
+	always_comb begin
 
+		done = 1'b0;
+		data_out = '0;
+		overflow = 1'b0;
+		error = 1'b0;
+
+		next = 'x;
+
+		unique case (state)
+
+			RESET : begin
+				if (!reset_n) next = RESET;
+				else next = IDLE;
+			end
+
+			IDLE : begin
+				if (load && triangle) next = LOAD_TRI;
+				else if (load && fibonacci) next = LOAD_FIB;
+				else next = IDLE;
+			end
+
+			LOAD_TRI : begin
+				if (!load) next = IDLE;
+				else if (~|order) next = ERROR;
+				else next = TRI_ADD;
+			end
+
+			LOAD_FIB : begin
+				if (!load) next = IDLE;
+				else if ((~|order) || (~|data_in)) next = ERROR;
+				else next = FIB_ADD;
+			end
+
+			ERROR : begin
+				error = 1'b1;
+				data_out = 'x;
+				if (clear) next = IDLE;
+				else next = ERROR;
+			end
+
+			TRI_ADD : begin
+				if (flag_ovrflow) next = OVRFLOW;
+				else if (flag_done) next = DONE;
+				else next = TRI_ADD;
+			end
+
+			FIB_ADD : begin
+				if (flag_ovrflow) next = OVRFLOW;
+				else if (flag_done) next = DONE;
+				else next = TRI_ADD;
+			end
+
+			DONE : begin
+				next = IDLE;
+				done = 1'b1;
+				data_out = int_data_out;
+			end
+
+			OVRFLOW : begin
+				overflow = 1'b1;
+				data_out = '1;
+				if (clear) next = IDLE;
+				else next = OVRFLOW;
+			end
+			
+		endcase // state
+
+	end
 
 endmodule // sequence_gen

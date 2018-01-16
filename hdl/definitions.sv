@@ -51,8 +51,8 @@
 			FIB_ADD 	= 4'd5,
 			TRI_ADD 	= 4'd6,
 			OVRFLOW 	= 4'd7,
-			DONE 		= 4'd8 
-
+			DONE 		= 4'd8
+			
 			} state_t;
 
 	endpackage
