@@ -1,0 +1,8 @@
+# .gitignore file for ECE 593 Lab 1
+
+$ cat .gitignore
+
+# skip everything in /docs
+# these are just PDFs and Word files
+
+/docs/*
