@@ -10,12 +10,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 `include "definitions.sv"
-`include "sequence_gen_test.v"
-`include "sequence_gen.sv"
 
 module top_hdl();
 
-	timeunit 1ns / 1ps;
+	timeunit 10ns / 1ns;
 
 	/************************************************************************/
 	/* Local parameters and variables										*/

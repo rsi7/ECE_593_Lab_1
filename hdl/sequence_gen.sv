@@ -17,7 +17,6 @@ module sequence_gen (
 	/* Top-level port declarations											*/
 	/************************************************************************/
 
-
 	input	ulogic1		clk,		// clock signal
 	input	ulogic1		reset_n,	// active-low reset
 
@@ -35,7 +34,6 @@ module sequence_gen (
 	output	ulogic1		overflow,	// calculation exceeds bus max
 	output	ulogic1		error		// indicates bad control input or bad data
 
-
 	);
 
 	/*************************************************************************/
@@ -45,9 +43,26 @@ module sequence_gen (
 	state_t		state	= UNKNOWN;
 	state_t		next	= UNKNOWN;
 
+	ulogic64	temp_data_out	= '0;
+	ulogic1		flag_ovrflow	= 1'b0;
+	ulogic1		flag_done		= 1'b0;
+
 	/************************************************************************/
 	/* Module instantiations												*/
 	/************************************************************************/
+
+	unsigned logic [63:0] op_a;
+	unsigned logic [63:0] op_b;
+	unsigned logic [63:0] sum;
+
+	n_bit_full_adder i_n_bit_full_adder (
+
+		.op_a		(op_a),		// I [64] operand a
+		.op_b		(op_b),		// I [64] operand b
+		.sum		(sum),		// O [64] sum
+		.overflow	(overflow)	// O [0]  overflow
+
+		);
 
 	/*************************************************************************/
 	/* FSM Block 1: reset & state advancement								 */
@@ -127,7 +142,7 @@ module sequence_gen (
 			DONE : begin
 				next = IDLE;
 				done = 1'b1;
-				data_out = int_data_out;
+				data_out = temp_data_out;
 			end
 
 			OVRFLOW : begin
@@ -136,9 +151,9 @@ module sequence_gen (
 				if (clear) next = IDLE;
 				else next = OVRFLOW;
 			end
-			
+
 		endcase // state
 
-	end
+	end // always_comb
 
 endmodule // sequence_gen

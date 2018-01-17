@@ -6,3 +6,8 @@ $ cat .gitignore
 # these are just PDFs and Word files
 
 /docs/*
+
+# skip everything in /sublimme
+# project file + workspace for text editor
+
+/sublime/*
