@@ -7,7 +7,12 @@ $ cat .gitignore
 
 /docs/*
 
-# skip everything in /sublimme
+# skip everything in /sublime
 # project file + workspace for text editor
 
 /sublime/*
+
+# skip everything in results
+# text files & PDF waveform plot
+
+/results/*

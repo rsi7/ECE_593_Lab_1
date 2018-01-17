@@ -14,11 +14,11 @@
 
 module n_bit_full_adder #(parameter N = 64) (
 
-		input unsigned logic	[N-1:0]	op_a,		// operand a
-		input unsigned logic	[N-1:0]	op_b,		// operand b
+		input logic unsigned	[N-1:0]	op_a,		// operand a
+		input logic unsigned	[N-1:0]	op_b,		// operand b
 
-		output unsigned logic	[N-1:0]	sum,		// sum
-		output unsigned logic			overflow	// overflow
+		output logic unsigned	[N-1:0]	sum,		// sum
+		output logic unsigned			overflow	// overflow
 
 	);
 
@@ -26,7 +26,7 @@ module n_bit_full_adder #(parameter N = 64) (
 	/* Local parameters and variables										 */
 	/*************************************************************************/
 
-	unsigned logic	[N:0]	carry;
+	logic unsigned [N:0]	carry;
 
 	/*************************************************************************/
 	/* Full adder instantiation												 */
