@@ -100,7 +100,7 @@ module sequence_gen (
 		overflow = 1'b0;
 		error = 1'b0;
 
-		unique case (state)
+		case (state)
 
 			RESET : begin
 				if (!reset_n) next = RESET;
@@ -115,13 +115,13 @@ module sequence_gen (
 
 			LOAD_TRI : begin
 				if (!load) next = IDLE;
-				else if (~|order) next = ERROR;
+				else if (~|reg_order) next = ERROR;
 				else next = TRI_ADD;
 			end
 
 			LOAD_FIB : begin
 				if (!load) next = IDLE;
-				else if ((~|order) || (~|data_in)) next = ERROR;
+				else if ((~|reg_order) || (~|reg_data_in)) next = ERROR;
 				else next = FIB_ADD;
 			end
 
@@ -141,7 +141,7 @@ module sequence_gen (
 			FIB_ADD : begin
 				if (nbit_overflow) next = OVRFLOW;
 				else if (flag_done) next = DONE;
-				else next = TRI_ADD;
+				else next = FIB_ADD;
 			end
 
 			DONE : begin
@@ -176,7 +176,7 @@ module sequence_gen (
 		count <= count;
 		flag_done <= 1'b0;
 
-		unique case (state)
+		case (state)
 
 			IDLE : begin
 
@@ -189,7 +189,7 @@ module sequence_gen (
 
 			TRI_ADD : begin
 
-				if (count <= reg_order) begin
+				if (count < reg_order) begin
 
 					if (count == 16'd0) begin
 						nbit_op_a <= reg_data_in;

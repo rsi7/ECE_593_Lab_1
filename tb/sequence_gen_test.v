@@ -77,7 +77,7 @@ module sequence_gen_test (
 		# RESET_DURATION int_reset_n = 1;
 		$display ("\n@ %0d ns The chip is out of reset", $time);
 
-		repeat (10)  @(posedge clk);
+		repeat (10) @(posedge clk);
 
 		test_seq = 0;
 
@@ -89,17 +89,17 @@ module sequence_gen_test (
 
 			case (seq_type) 
 				
-			0 : begin
-					$display ("@ %0d ns: Running Triangle sequences", $time);
-					int_fibonacci = 0;
-					int_triangle = 1;
-				end
+				0 : begin
+						$display ("@ %0d ns: Running Triangle sequences", $time);
+						int_fibonacci = 0;
+						int_triangle = 1;
+					end
 
-			1 : begin
-					$display ("@ %0d ns: Running Fibonacci sequences", $time);
-					int_fibonacci = 1;
-					int_triangle = 0;
-				end
+				1 : begin
+						$display ("@ %0d ns: Running Fibonacci sequences", $time);
+						int_fibonacci = 1;
+						int_triangle = 0;
+					end
 
 			endcase
 
@@ -109,22 +109,26 @@ module sequence_gen_test (
 
 				repeat (MAX_ORDER) begin
 
-				test_seq = test_seq+1;
-				order_count = order_count + 1;
-
-					int_load      = 1;
-					repeat (1)  @(posedge clk);
+					test_seq = test_seq + 1;
+					order_count = order_count + 1;
+					int_load = 1;
 					int_order = order_count;
 					int_data = first_data;
+
+					repeat (1) @(posedge clk);
+
 					$display ("@ %0d ns: Test sequence: %0d: Initial data= %0d. Order= %0d ", $time, test_seq, int_data, int_order);
 
 					while (done == 0) @(posedge clk);
+
 					$display ("@ %0d ns: Result: %0d. Overflow bit: %h. Error bit: %h\n", $time, data_out, overflow, error);
+					
 					int_load = 0;
 					int_order = 0;
 					int_data = 8'h0;
 					delay = ({$random} % 4'hf);
-					repeat (delay+2)  @(posedge clk);
+
+					repeat (delay + 2) @(posedge clk);
 
 				end // repeat (MAX_ORDER)
 				
@@ -132,47 +136,61 @@ module sequence_gen_test (
 
 			end // repeat (MAX_INIT_VAL)
 
+			first_data = INIT_VAL;
+
 			///////////////////////////////////
 			// Test error case w/ zero order //
 			///////////////////////////////////
 
-			test_seq = test_seq+1;
+			test_seq = test_seq + 1;
 			int_load = 1;
-			repeat (1)  @(posedge clk);
 			int_order = 0;
 			int_data = 1;
+
+			repeat (1) @(posedge clk);
+
 			$display ("@ %0d ns: Test sequence: %0d: Initial data= %0d. Order= %0d ", $time, test_seq, int_data, int_order);
 
 			while (error == 0) @(posedge clk);
+
 			$display ("@ %0d ns: Result: %0d. Overflow bit: %h. Error bit: %h\n", $time, data_out, overflow, error);
+			
 			delay = ({$random} % 4'hf);
-			repeat (delay+20)  @(posedge clk);
+
+			repeat (delay + 20) @(posedge clk);
+
 			int_load = 0;
 			int_order = 0;
 			int_data = 8'h0;
 			int_clear = 1;
 			delay = ({$random} % 4'hf);
-			repeat (delay+2)  @(posedge clk);
+
+			repeat (delay + 2) @(posedge clk);
 
 			/////////////////////////////////////////////////////////
 			// Test to make sure FSM recovers from error condition //
 			/////////////////////////////////////////////////////////
 
-			test_seq = test_seq+1;
+			test_seq = test_seq + 1;
 			int_clear = 0;
 			int_load = 1;
-			repeat (1)  @(posedge clk);
 			int_order = 10;
 			int_data = 1;
+
+			repeat (1)  @(posedge clk);
+
 			$display ("@ %0d ns: Test sequence: %0d: Initial data= %0d. Order= %0d ", $time, test_seq, int_data, int_order);
 
 			while (done == 0) @(posedge clk);
+
 			$display ("@ %0d ns: Result: %0d. Overflow bit: %h. Error bit: %h\n", $time, data_out, overflow, error);
+			
 			int_load = 0;
 			int_order = 0;
 			int_data = 8'h0;
 			delay = ({$random} % 4'hf);
-			repeat (delay+2)  @(posedge clk);
+
+			repeat (delay + 2) @(posedge clk);
 
 			if (seq_type == 1) begin
 
@@ -182,21 +200,29 @@ module sequence_gen_test (
 
 				test_seq = test_seq+1;
 				int_load = 1;
-				repeat (1)  @(posedge clk);
 				int_order = 5;
 				int_data = 0;
+
+				repeat (1)  @(posedge clk);
+
 				$display ("@ %0d ns: Test sequence: %0d: Initial data= %0d. Order= %0d ", $time, test_seq, int_data, int_order);
 
 				while (error == 0) @(posedge clk);
+
 				$display ("@ %0d ns: Result: %0d. Overflow bit: %h. Error bit: %h\n", $time, data_out, overflow, error);
+				
 				delay = ({$random} % 4'hf);
-				repeat (delay+20)  @(posedge clk);
+				
+				repeat (delay + 20) @(posedge clk);
+
 				int_load = 0;
 				int_order = 0;
 				int_data = 8'h0;
 				int_clear = 1;
+
 				delay = ({$random} % 4'hf);
-				repeat (delay+2)  @(posedge clk);
+
+				repeat (delay + 2) @(posedge clk);
 
 				/////////////////////////////////////////////////////////
 				// Test to make sure FSM recovers from error condition //
@@ -205,18 +231,23 @@ module sequence_gen_test (
 				test_seq = test_seq+1;
 				int_clear = 0;
 				int_load = 1;
-				repeat (1)  @(posedge clk);
 				int_order = 10;
 				int_data = 2;
+
+				repeat (1) @(posedge clk);
+
 				$display ("@ %0d ns: Test sequence: %0d: Initial data= %0d. Order= %0d ", $time, test_seq, int_data, int_order);
 
 				while (done == 0) @(posedge clk);
+
 				$display ("@ %0d ns: Result: %0d. Overflow bit: %h. Error bit: %h\n", $time, data_out, overflow, error);
+				
 				int_load = 0;
 				int_order = 0;
 				int_data = 8'h0;
 				delay = ({$random} % 4'hf);
-				repeat (delay+2)  @(posedge clk);
+
+				repeat (delay + 2) @(posedge clk);
 
 				///////////////////////////////////////
 				// Test  overflow case w/ high order //
@@ -224,22 +255,30 @@ module sequence_gen_test (
 
 				test_seq = test_seq+1;
 				int_load = 1;
-				repeat (1)  @(posedge clk);
 				int_order = 1500;
 				int_data = 1;
+
+				repeat (1)  @(posedge clk);
+
 				$display ("@ %0d ns: Test sequence: %0d: Initial data= %0d. Order= %0d ", $time, test_seq, int_data, int_order);
 
 				while (overflow == 0) @(posedge clk);
+
 				repeat (1)  @(posedge clk);
+
 				$display ("@ %0d ns: Result: %h. Overflow bit: %h. Error bit: %h\n", $time, data_out, overflow, error);
+				
 				delay = ({$random} % 4'hf);
+
 				repeat (delay+20)  @(posedge clk);
+
 				int_load = 0;
 				int_order = 0;
 				int_data = 8'h0;
 				int_clear = 1;
 				delay = ({$random} % 4'hf);
-				repeat (delay+2)  @(posedge clk);
+
+				repeat (delay + 2) @(posedge clk);
 
 				////////////////////////////////////////////////////////////
 				// Test to make sure FSM recovers from overflow condition //
@@ -248,20 +287,25 @@ module sequence_gen_test (
 				test_seq = test_seq+1;
 				int_clear = 0;
 				int_load = 1;
-				repeat (1)  @(posedge clk);
 				int_order = 15;
 				int_data = 1;
+
+				repeat (1)  @(posedge clk);
+
 				$display ("@ %0d ns: Test sequence: %0d: Initial data= %0d. Order= %0d ", $time, test_seq, int_data, int_order);
 
 				while (done == 0) @(posedge clk);
+
 				$display ("@ %0d ns: Result: %0d. Overflow bit: %h. Error bit: %h\n", $time, data_out, overflow, error);
+				
 				int_load = 0;
 				int_order = 0;
 				int_data = 8'h0;
 				delay = ({$random} % 4'hf);
-				repeat (delay+2)  @(posedge clk);
 
-			end // if (seq_type == 1) block 
+				repeat (delay + 2) @(posedge clk);
+
+			end // Fibonacci overflow / zero data checking 
 
 		end // for loop seq_type
 
