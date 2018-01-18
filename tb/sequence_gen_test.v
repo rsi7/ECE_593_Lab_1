@@ -5,7 +5,23 @@
 //
 // Description:	
 //
-// Test module for 'sequence_gen' dut.
+// This is the testbench for the 'sequence_gen' module as part of Lab 1.
+// The file has been edited for formatting/indentation, and also adjusts
+// the timing of the 'int_order' and 'int_data' signals being applied.
+//
+// The lab specification states that "both inputs 'data_in' and 'order' must
+// be driven on the same cycle when 'load' is asserted in order to be latched
+// by the sequence generator." I interpreted this to mean that 'data' and 'order'
+// should be sampled on the first rising edge that 'load' is
+// high. The original, unedited testbench drove these two signals on the second
+// clock edge. The phrasing is ambiguous and no timing diagram was provided,
+// so I have modified the testbench to move the assignments to 'int_order' and
+// 'int_data' one cycle earlier.
+//
+// All other lines should be identical to the original copy... just formatting 
+// and commenting changes.
+//
+// NOTE: USE THIS TESTBENCH FILE WITH SEQUENCE_GEN.SV - ORIGINAL FILE WILL NOT WORK
 //
 ////////////////////////////////////////////////////////////////////////////////
 

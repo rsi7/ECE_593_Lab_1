@@ -6,8 +6,15 @@
 // Description:
 //
 // Simple testbench module for the "n_bit_full_adder.sv" module. Randomly
-// generates some data on input operands A & B and compares DUT results
-// against testbench arithmetic.
+// generates some 64-bit data on the inputs and logs the HW results to a log
+// file, along with the testbench's calculations. You can compare the two
+// and see if there are any discrepancies... no auto-checking performed here.
+//
+// NOTE: if the size of "n_bit_full_adder" is changed via its parameter (N),
+// this will (possibly) break this testbench! It's hardcoded for 64-bit operation.
+//
+// NOTE: Adjust the file path for the log file, as this path won't exist on
+// your machine.
 //
 ////////////////////////////////////////////////////////////////////////////////
 

@@ -5,7 +5,25 @@
 //
 // Description:
 //
-// This module generates a sequence (either Fibonacci or triangle).
+// This module calculates the Nth term of Fibonacci/triangle sequence given
+// some initial data value. The input data (data_in) and Nth term desired
+// (order) should be provided ON THE SAME CYCLE that 'load' signal goes high
+// (i.e. data_in, order, and load are ALL latched on the same rising clock edge).
+// This is in accordance with the project spec... do not provide them on the
+// following cycle!
+//
+// 'load' needs to be asserted for 2 cycles, while the other inputs (data_in, 
+// order, fibonacci, triangle) only need to be provided for 1 cycle. 
+// The 'clear' signal will take the FSM out of its ERROR & OVRFLOW states after
+// a single cycle. No behavior was specified for both 'fibonacci' and 'triangle'
+// being active simultaneously; the 'case' statement will prioritize 'triangle'
+// first as a result.
+//
+// When the result is calculated, 'done' will assert for one clock cycle.
+// During this cycle the results on 'data_out' can be sampled - these
+// results will change to zero on the following cycle, so make sure to capture!
+//
+// See the FSM diagram and lab writeup for additional details.
 //
 ////////////////////////////////////////////////////////////////////////////////
 

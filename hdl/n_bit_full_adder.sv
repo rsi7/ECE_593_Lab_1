@@ -5,8 +5,15 @@
 //
 // Description:
 //
-// This module implements an n-bit full adder using Verilog gate-level primitives
-// (OR, NOR, AND, NAND, XOR, XNOR) and the "one_bit_full_adder.sv" module.
+// This module implements an n-bit full adder. It is composed of multiple
+// copies of the 'one_bit_full_adder' module, with their carry-in & carry-out
+// signals chained. The Nth adder provides its carry-out as the 'overflow'
+// output for the module. This will be high if the sum exceeds the width
+// of the data bus inputs.
+//
+// To adjust the width, override parameter 'N' when instantiating this module.
+// Note that it may break the 'n_bit_full_adder_test' testbench, as that
+// module is hardcoded for 64-bit operation.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
