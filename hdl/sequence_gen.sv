@@ -40,27 +40,34 @@ module sequence_gen (
 	/* Local parameters and variables										 */
 	/*************************************************************************/
 
-	state_t		state	= UNKNOWN;
-	state_t		next	= UNKNOWN;
+	state_t		state;
+	state_t		next;
 
-	ulogic64	temp_data_out	= '0;
-	ulogic1		flag_ovrflow	= 1'b0;
-	ulogic1		flag_done		= 1'b0;
+	// signals for n_bit_full_adder module
+
+	ulogic64	nbit_op_a;
+	ulogic64	nbit_op_b;
+	ulogic64	nbit_sum;
+	ulogic1		nbit_overflow;
+
+
+	// signals for Fibonacci and triangle calculations
+
+	ulogic1		flag_done;
+	ulogic16	count;
+	ulogic64	reg_data_in;
+	ulogic64	reg_order;
 
 	/************************************************************************/
 	/* Module instantiations												*/
 	/************************************************************************/
 
-	unsigned logic [63:0] op_a;
-	unsigned logic [63:0] op_b;
-	unsigned logic [63:0] sum;
-
 	n_bit_full_adder i_n_bit_full_adder (
 
-		.op_a		(op_a),		// I [64] operand a
-		.op_b		(op_b),		// I [64] operand b
-		.sum		(sum),		// O [64] sum
-		.overflow	(overflow)	// O [0]  overflow
+		.op_a		(nbit_op_a),		// I [64] operand a
+		.op_b		(nbit_op_b),		// I [64] operand b
+		.sum		(nbit_sum),			// O [64] sum
+		.overflow	(nbit_overflow)		// O [0]  overflow
 
 		);
 
@@ -92,8 +99,6 @@ module sequence_gen (
 		data_out = '0;
 		overflow = 1'b0;
 		error = 1'b0;
-
-		next = 'x;
 
 		unique case (state)
 
@@ -128,13 +133,13 @@ module sequence_gen (
 			end
 
 			TRI_ADD : begin
-				if (flag_ovrflow) next = OVRFLOW;
+				if (nbit_overflow) next = OVRFLOW;
 				else if (flag_done) next = DONE;
 				else next = TRI_ADD;
 			end
 
 			FIB_ADD : begin
-				if (flag_ovrflow) next = OVRFLOW;
+				if (nbit_overflow) next = OVRFLOW;
 				else if (flag_done) next = DONE;
 				else next = TRI_ADD;
 			end
@@ -142,7 +147,7 @@ module sequence_gen (
 			DONE : begin
 				next = IDLE;
 				done = 1'b1;
-				data_out = temp_data_out;
+				data_out = nbit_sum;
 			end
 
 			OVRFLOW : begin
@@ -155,5 +160,83 @@ module sequence_gen (
 		endcase // state
 
 	end // always_comb
+
+	/*************************************************************************/
+	/* Fibonacci & triangle calculation block								 */
+	/*************************************************************************/
+
+	always_ff@(posedge clk) begin
+
+		nbit_op_a <= nbit_op_a;
+		nbit_op_b <= nbit_op_b;
+
+		reg_data_in <= reg_data_in;
+		reg_order <= reg_order;
+
+		count <= count;
+		flag_done <= 1'b0;
+
+		unique case (state)
+
+			IDLE : begin
+
+				reg_data_in <= data_in;
+				reg_order <= order;
+
+				count <= '0;
+
+			end // IDLE
+
+			TRI_ADD : begin
+
+				if (count <= reg_order) begin
+
+					if (count == 16'd0) begin
+						nbit_op_a <= reg_data_in;
+						nbit_op_b <= count;
+					end
+
+					else begin
+						nbit_op_a <= nbit_sum;
+						nbit_op_b <= count;
+					end
+					
+					count <= count + 1'b1;
+
+				end // if
+
+				else begin
+					flag_done <= 1'b1;
+				end
+
+			end // TRI_ADD
+
+			FIB_ADD : begin
+
+				if (count < reg_order) begin
+
+					if (count == 16'd0) begin
+						nbit_op_a <= reg_data_in;
+						nbit_op_b <= '0;
+					end
+
+					else begin
+						nbit_op_a <= nbit_sum;
+						nbit_op_b <= nbit_op_a;
+					end
+
+					count <= count + 1'b1;
+
+				end // if
+
+				else begin
+					flag_done <= 1'b1;
+				end
+
+			end // FIB_ADD
+
+		endcase
+
+	end // always_ff
 
 endmodule // sequence_gen

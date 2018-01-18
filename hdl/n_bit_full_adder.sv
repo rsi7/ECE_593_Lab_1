@@ -44,6 +44,7 @@ module n_bit_full_adder #(parameter N = 64) (
 				.op_a	(op_a[i]),		// I [0] operand a
 				.op_b	(op_b[i]),		// I [0] operand b
 				.c_in	(carry[i]),		// I [0] carry-in
+				
 				.sum	(sum[i]),		// O [0] sum
 				.c_out	(carry[i+1])	// O [0] carry-out
 

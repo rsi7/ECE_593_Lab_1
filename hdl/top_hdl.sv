@@ -22,6 +22,19 @@ module top_hdl();
 
 	ulogic1		clk		= 1'b0;
 
+	ulogic1		reset_n;
+	ulogic1		fibonacci;
+	ulogic1		triangle;
+	ulogic1		load;
+	ulogic1		clear;
+	ulogic16	order;
+	ulogic64	data_in;
+
+	ulogic1		done;
+	ulogic64	data_out;
+	ulogic1		overflow;
+	ulogic1		error;
+
 	/************************************************************************/
 	/* Module instantiations												*/
 	/************************************************************************/
